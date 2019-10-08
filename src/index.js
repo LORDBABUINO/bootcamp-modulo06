@@ -1,4 +1,5 @@
 import React from 'react'
+import './config/Reactotron'
 import {
   SafeAreaView,
   StyleSheet,
@@ -55,6 +56,7 @@ const styles = StyleSheet.create({
   },
 })
 
+console.tron.log('Hello Word')
 const App = () => (
   <>
     <StatusBar barStyle="dark-content" />
