@@ -1,7 +1,7 @@
 import React from 'react'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
-import {Container, Form, Input, SubmitButton} from './styles'
+import { Container, Form, Input, SubmitButton } from './styles'
 
 const Main = () => (
   <Container>
