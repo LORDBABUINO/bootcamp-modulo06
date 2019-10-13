@@ -21,18 +21,39 @@ class User extends Component {
   state = {
     stars: [],
     loading: false,
+    page: 1,
+    refreshing: false,
   }
 
   async componentDidMount() {
-    const { navigation } = this.props
+    const { page } = this.state
     this.setState({ loading: true })
+    await this.loadMore(page)()
+    this.setState({ loading: false })
+  }
+
+  async componentDidUpdate() {
+    console.tron.log(this.state)
+  }
+
+  loadMore = page => async () => {
+    const { stars } = this.state
+    const { navigation } = this.props
     const user = navigation.getParam('user')
-    const response = await api.get(`/users/${user.login}/starred`)
-    this.setState({ stars: response.data, loading: false })
+    const { data: newStars } = await api.get(
+      `/users/${user.login}/starred?page=${page}`
+    )
+    this.setState({ stars: [...stars, ...newStars], page: page + 1 })
+  }
+
+  refreshList = async () => {
+    this.setState({ refreshing: true, stars: [] })
+    await this.loadMore(1)()
+    this.setState({ refreshing: false })
   }
 
   render() {
-    const { stars, loading } = this.state
+    const { stars, loading, refreshing, page } = this.state
     const { navigation } = this.props
     const user = navigation.getParam('user')
     return (
@@ -48,6 +69,10 @@ class User extends Component {
           </Container>
         ) : (
           <Stars
+            onRefresh={this.refreshList}
+            refreshing={refreshing}
+            onEndReachedThereshold={0.2}
+            onEndReached={this.loadMore(page)}
             data={stars}
             keyExtractor={star => String(star.id)}
             renderItem={({ item }) => (
